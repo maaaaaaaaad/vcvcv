@@ -10,11 +10,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Jelly Pin',
+      title: 'Jello Mark',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Jelly Pin Home Page'),
+      home: const MyHomePage(title: 'Jello Mark Home Page'),
     );
   }
 }
