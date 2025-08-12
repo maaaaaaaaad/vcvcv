@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'core/design_system/app_colors.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Jello Mark',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primaryBlue),
       ),
       home: const MyHomePage(title: 'Jello Mark Home Page'),
     );
