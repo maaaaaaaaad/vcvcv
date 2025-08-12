@@ -5,6 +5,25 @@ set -euo pipefail
 IOS_UDID="81D1F7B9-4C47-4C98-A939-3F4CF33A232E"
 ANDROID_AVD_NAME="Medium_Phone_API_36.0"
 
+prepare_project() {
+  echo "Preparing Flutter project (pub get + generate native splash)..."
+  if command -v flutter >/dev/null 2>&1; then
+    flutter pub get
+  else
+    echo "Error: 'flutter' not found in PATH" >&2
+    exit 1
+  fi
+
+  # Prefer 'dart run', fallback to 'flutter pub run'
+  if command -v dart >/dev/null 2>&1; then
+    dart run flutter_native_splash:create || flutter pub run flutter_native_splash:create
+  else
+    flutter pub run flutter_native_splash:create
+  fi
+
+  echo "Project prepared."
+}
+
 ensure_simulator_app() {
   if ! pgrep -x "Simulator" >/dev/null; then
     echo "Launching Simulator.app..."
@@ -45,6 +64,8 @@ boot_android_emulator() {
   done
   echo "Android Emulator is ready."
 }
+
+prepare_project
 
 boot_ios_simulator &
 ios_pid=$!
