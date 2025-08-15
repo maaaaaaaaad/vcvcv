@@ -7,6 +7,13 @@ import '../domain/usecases/login_with_kakao.dart';
 import '../domain/usecases/logout.dart';
 import '../presentation/auth/splash_view_model.dart';
 import '../presentation/auth/login_view_model.dart';
+import '../data/datasources/mock_browse_data_source.dart';
+import '../data/repositories/browse_repository_impl.dart';
+import '../domain/repositories/browse_repository.dart';
+import '../domain/usecases/fetch_shops_page.dart';
+import '../domain/usecases/fetch_history_page.dart';
+import '../domain/usecases/fetch_favorites_page.dart';
+import '../presentation/main/paging_view_models.dart';
 import 'service_locator.dart';
 
 Future<void> configureDependencies() async {
@@ -28,5 +35,28 @@ Future<void> configureDependencies() async {
   );
   sl.registerFactory<LoginViewModel>(
     () => LoginViewModel(loginWithKakao: sl.get<LoginWithKakao>()),
+  );
+
+  sl.registerSingleton<MockBrowseDataSource>(const MockBrowseDataSource());
+  sl.registerSingleton<BrowseRepository>(
+    BrowseRepositoryImpl(sl.get<MockBrowseDataSource>()),
+  );
+  sl.registerSingleton<FetchShopsPage>(
+    FetchShopsPage(sl.get<BrowseRepository>()),
+  );
+  sl.registerSingleton<FetchHistoryPage>(
+    FetchHistoryPage(sl.get<BrowseRepository>()),
+  );
+  sl.registerSingleton<FetchFavoritesPage>(
+    FetchFavoritesPage(sl.get<BrowseRepository>()),
+  );
+  sl.registerFactory<HomeListViewModel>(
+    () => HomeListViewModel(useCase: sl.get<FetchShopsPage>()),
+  );
+  sl.registerFactory<HistoryListViewModel>(
+    () => HistoryListViewModel(useCase: sl.get<FetchHistoryPage>()),
+  );
+  sl.registerFactory<FavoritesListViewModel>(
+    () => FavoritesListViewModel(useCase: sl.get<FetchFavoritesPage>()),
   );
 }
