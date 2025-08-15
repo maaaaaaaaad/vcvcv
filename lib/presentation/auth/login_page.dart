@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../di/service_locator.dart';
-import '../home/home_page.dart';
+import '../main/main_page.dart';
 import 'login_view_model.dart';
 
 class LoginPage extends StatefulWidget {
@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
     if (!mounted) return;
     if (ok) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const MyHomePage(title: 'Jello Mark Home Page')),
+        MaterialPageRoute(builder: (_) => const MainPage()),
       );
     }
   }

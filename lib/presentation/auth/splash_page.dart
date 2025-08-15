@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../di/service_locator.dart';
-import '../home/home_page.dart';
+import '../main/main_page.dart';
 import 'login_page.dart';
 import 'splash_view_model.dart';
 
@@ -28,7 +28,7 @@ class _SplashPageState extends State<SplashPage> {
 
   void _navigate(SplashDestination dest) {
     final page = dest == SplashDestination.home
-        ? const MyHomePage(title: 'Jello Mark Home Page')
+        ? const MainPage()
         : const LoginPage();
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (_) => page),

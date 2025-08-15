@@ -5,7 +5,7 @@ import 'package:jello_mark/presentation/auth/login_page.dart';
 import 'package:jello_mark/presentation/auth/login_view_model.dart';
 import 'package:jello_mark/presentation/auth/splash_page.dart';
 import 'package:jello_mark/presentation/auth/splash_view_model.dart';
-import 'package:jello_mark/presentation/home/home_page.dart';
+import 'package:jello_mark/presentation/main/main_page.dart';
 import 'package:jello_mark/main.dart';
 
 class _FakeSplashToLogin extends SplashViewModel {
@@ -48,7 +48,7 @@ void main() {
     sl.registerFactory<SplashViewModel>(() => _FakeSplashToHome());
     await tester.pumpWidget(const MaterialApp(home: SplashPage()));
     await tester.pump();
-    expect(find.byType(MyHomePage), findsOneWidget);
+    expect(find.byType(MainPage), findsOneWidget);
   });
 
   testWidgets('LoginPage button triggers navigation to Home on success', (tester) async {
@@ -57,7 +57,7 @@ void main() {
     expect(find.text('카카오로 로그인'), findsOneWidget);
     await tester.tap(find.text('카카오로 로그인'));
     await tester.pump();
-    expect(find.byType(MyHomePage), findsOneWidget);
+    expect(find.byType(MainPage), findsOneWidget);
   });
 
   testWidgets('MyApp builds and shows SplashPage then goes to Login via fake', (tester) async {
