@@ -26,6 +26,11 @@ class ServiceLocator {
     }
     throw StateError('Service of type $T not found');
   }
+
+  void reset() {
+    _singletons.clear();
+    _factories.clear();
+  }
 }
 
 final sl = ServiceLocator.instance;
