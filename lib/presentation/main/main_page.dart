@@ -3,6 +3,8 @@ import '../../core/design_system/app_colors.dart';
 import '../../domain/entities/history_record.dart';
 import '../../domain/entities/shop.dart';
 import 'paging_view_models.dart';
+import '../shop/shop_detail_page.dart';
+import '../history/history_detail_page.dart';
 
 class MainPage extends StatefulWidget {
   final HomeListViewModel homeVm;
@@ -140,10 +142,14 @@ class _HomeTabPageState extends State<HomeTabPage> {
                 ),
                 elevation: 2,
                 child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: AppColors.primaryBlue,
-                    child: const Icon(Icons.store, color: Colors.white),
-                  ),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => ShopDetailPage(shopId: s.id),
+                      ),
+                    );
+                  },
+                  leading: _ShopThumb(url: s.thumbnailUrl),
                   title: Text(
                     s.name,
                     style: const TextStyle(fontWeight: FontWeight.bold),
@@ -247,6 +253,13 @@ class _HistoryTabPageState extends State<HistoryTabPage> {
                         color: AppColors.primaryBlue,
                       ),
                       title: Text(r.title),
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => HistoryDetailPage(record: r),
+                          ),
+                        );
+                      },
                       subtitle: Text(r.shop + ' · ' + _fmt(r.date)),
                       trailing: Text(
                         r.price.toString() + '원',
@@ -349,10 +362,14 @@ class _FavoritesTabPageState extends State<FavoritesTabPage> {
                 ),
                 elevation: 2,
                 child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: AppColors.primaryBlue,
-                    child: const Icon(Icons.favorite, color: Colors.white),
-                  ),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => ShopDetailPage(shopId: s.id),
+                      ),
+                    );
+                  },
+                  leading: _ShopThumb(url: s.thumbnailUrl),
                   title: Text(
                     s.name,
                     style: const TextStyle(fontWeight: FontWeight.bold),
@@ -382,6 +399,54 @@ class _FavoritesTabPageState extends State<FavoritesTabPage> {
                 ),
               );
             },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ShopThumb extends StatelessWidget {
+  final String url;
+
+  const _ShopThumb({required this.url});
+
+  @override
+  Widget build(BuildContext context) {
+    final dpr = MediaQuery.of(context).devicePixelRatio;
+    final target = (56 * dpr).round();
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: Image.network(
+        url,
+        width: 56,
+        height: 56,
+        fit: BoxFit.cover,
+        cacheWidth: target,
+        filterQuality: FilterQuality.medium,
+        loadingBuilder: (context, child, progress) {
+          if (progress == null) return child;
+          return Container(
+            width: 56,
+            height: 56,
+            color: AppColors.lavender.withOpacity(0.5),
+            alignment: Alignment.center,
+            child: const SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          );
+        },
+        errorBuilder: (context, error, stack) => Container(
+          width: 56,
+          height: 56,
+          color: AppColors.lavender,
+          alignment: Alignment.center,
+          child: const Icon(
+            Icons.image_not_supported,
+            size: 18,
+            color: Colors.white,
           ),
         ),
       ),

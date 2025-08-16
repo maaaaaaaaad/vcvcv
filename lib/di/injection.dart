@@ -14,6 +14,9 @@ import '../domain/usecases/fetch_shops_page.dart';
 import '../domain/usecases/fetch_history_page.dart';
 import '../domain/usecases/fetch_favorites_page.dart';
 import '../presentation/main/paging_view_models.dart';
+import '../domain/usecases/get_shop_detail.dart';
+import '../domain/usecases/fetch_shop_reviews_page.dart';
+import '../domain/usecases/toggle_favorite.dart';
 import 'service_locator.dart';
 
 Future<void> configureDependencies() async {
@@ -37,7 +40,7 @@ Future<void> configureDependencies() async {
     () => LoginViewModel(loginWithKakao: sl.get<LoginWithKakao>()),
   );
 
-  sl.registerSingleton<MockBrowseDataSource>(const MockBrowseDataSource());
+  sl.registerSingleton<MockBrowseDataSource>(MockBrowseDataSource());
   sl.registerSingleton<BrowseRepository>(
     BrowseRepositoryImpl(sl.get<MockBrowseDataSource>()),
   );
@@ -58,5 +61,15 @@ Future<void> configureDependencies() async {
   );
   sl.registerFactory<FavoritesListViewModel>(
     () => FavoritesListViewModel(useCase: sl.get<FetchFavoritesPage>()),
+  );
+
+  sl.registerSingleton<GetShopDetail>(
+    GetShopDetail(sl.get<BrowseRepository>()),
+  );
+  sl.registerSingleton<FetchShopReviewsPage>(
+    FetchShopReviewsPage(sl.get<BrowseRepository>()),
+  );
+  sl.registerSingleton<ToggleFavorite>(
+    ToggleFavorite(sl.get<BrowseRepository>()),
   );
 }
