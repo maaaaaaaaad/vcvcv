@@ -38,7 +38,7 @@ class _DetailImagePager extends StatelessWidget {
           loadingBuilder: (context, child, progress) {
             if (progress == null) return child;
             return Container(
-              color: AppColors.lavender.withOpacity(0.4),
+              color: AppColors.lavender.withValues(alpha: 0.4),
               alignment: Alignment.center,
               child: const CircularProgressIndicator(),
             );

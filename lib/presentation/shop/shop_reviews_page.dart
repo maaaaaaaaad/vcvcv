@@ -30,7 +30,7 @@ class _ReviewThumb extends StatelessWidget {
           return Container(
             width: size,
             height: size,
-            color: AppColors.lavender.withOpacity(0.5),
+            color: AppColors.lavender.withValues(alpha: 0.5),
             alignment: Alignment.center,
             child: const SizedBox(
               width: 16,
