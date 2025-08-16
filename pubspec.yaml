@@ -22,6 +22,9 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/app_icon/jello-mark.png
+    - assets/app_splash_screen/jello-mark-splash-screen.png
 
 flutter_launcher_icons:
   android: true

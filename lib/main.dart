@@ -8,6 +8,7 @@ import 'presentation/auth/login_page.dart';
 import 'presentation/auth/login_view_model.dart';
 import 'presentation/main/main_page.dart';
 import 'presentation/main/paging_view_models.dart';
+import 'presentation/routes.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,8 +24,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Jello Mark',
       theme: ThemeData(
+        useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primaryBlue),
       ),
+      onGenerateRoute: generateRoute,
       home: SplashPage(
         vm: sl.get<SplashViewModel>(),
         homeBuilder: (_) => MainPage(
