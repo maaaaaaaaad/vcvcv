@@ -143,10 +143,7 @@ class _ShopDetailPageState extends State<ShopDetailPage> {
                               ),
                               const SizedBox(width: 2),
                               Text(
-                                detail.rating.toStringAsFixed(1) +
-                                    '(' +
-                                    detail.reviewCount.toString() +
-                                    ')',
+                                '${detail.rating.toStringAsFixed(1)}(${detail.reviewCount})',
                                 style: const TextStyle(
                                   color: Colors.black87,
                                   fontWeight: FontWeight.w600,
@@ -174,11 +171,9 @@ class _ShopDetailPageState extends State<ShopDetailPage> {
                             (s) => ListTile(
                               contentPadding: EdgeInsets.zero,
                               title: Text(s.name),
-                              subtitle: Text(
-                                s.durationMinutes.toString() + '분',
-                              ),
+                              subtitle: Text('${s.durationMinutes}분'),
                               trailing: Text(
-                                s.price.toString() + '원',
+                                '${s.price}원',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),

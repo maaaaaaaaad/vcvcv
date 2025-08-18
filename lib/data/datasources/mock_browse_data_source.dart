@@ -25,14 +25,14 @@ class MockBrowseDataSource {
     return List.generate(end - start, (i) {
       final idx = start + i + 1;
       final isNail = idx % 2 == 0;
-      final id = 'shop_' + idx.toString();
+      final id = 'shop_$idx';
       return Shop(
         id: id,
         name: isNail ? '젤네일 전문샵 $idx' : '눈썹 시술 스튜디오 $idx',
         category: isNail ? '네일아트' : '눈썹 시술',
         rating: 4.0 + (idx % 10) / 10,
         distanceKm: (idx % 5) + 0.3,
-        thumbnailUrl: 'https://picsum.photos/seed/' + id + '/120/120',
+        thumbnailUrl: 'https://picsum.photos/seed/$id/120/120',
       );
     });
   }
@@ -61,14 +61,14 @@ class MockBrowseDataSource {
     return List.generate(end - start, (i) {
       final idx = start + i + 1;
       final isNail = idx % 3 != 0;
-      final id = 'fav_' + idx.toString();
+      final id = 'fav_$idx';
       return Shop(
         id: id,
         name: isNail ? '즐겨찾기 네일샵 $idx' : '즐겨찾기 눈썹샵 $idx',
         category: isNail ? '네일아트' : '눈썹 시술',
         rating: 4.2 + (idx % 7) / 10,
         distanceKm: (idx % 7) + 0.5,
-        thumbnailUrl: 'https://picsum.photos/seed/' + id + '/120/120',
+        thumbnailUrl: 'https://picsum.photos/seed/$id/120/120',
       );
     });
   }
@@ -88,17 +88,10 @@ class MockBrowseDataSource {
     await Future<void>.delayed(const Duration(milliseconds: 80));
     final idx = int.tryParse(shopId.replaceAll(RegExp(r'[^0-9]'), '')) ?? 1;
     final isNail = idx % 2 == 0;
-    final name = isNail
-        ? '젤네일 전문샵 ' + idx.toString()
-        : '눈썹 시술 스튜디오 ' + idx.toString();
+    final name = isNail ? '젤네일 전문샵 $idx' : '눈썹 시술 스튜디오 $idx';
     final imageUrls = List<String>.generate(
       3,
-      (i) =>
-          'https://picsum.photos/seed/' +
-          shopId +
-          '_' +
-          i.toString() +
-          '/600/360',
+      (i) => 'https://picsum.photos/seed/${shopId}_$i/600/360',
     );
     final services = List<ServiceItem>.from([
       ServiceItem(
@@ -141,18 +134,11 @@ class MockBrowseDataSource {
       final imgCount = idx % 4;
       final imgs = List<String>.generate(
         imgCount,
-        (j) =>
-            'https://picsum.photos/seed/' +
-            shopId +
-            '_rev_' +
-            idx.toString() +
-            '_' +
-            j.toString() +
-            '/240/240',
+        (j) => 'https://picsum.photos/seed/${shopId}_rev_${idx}_$j/240/240',
       );
       return Review(
-        id: shopId + '_rev_' + idx.toString(),
-        user: '사용자' + idx.toString(),
+        id: '${shopId}_rev_$idx',
+        user: '사용자$idx',
         rating: 3.5 + (idx % 3) * 0.5,
         text: idx % 2 == 0 ? '만족스러운 서비스였습니다.' : '시설이 깔끔하고 응대가 친절했어요.',
         date: DateTime.now().subtract(Duration(days: idx)),

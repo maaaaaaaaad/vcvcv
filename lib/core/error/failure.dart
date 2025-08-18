@@ -6,9 +6,5 @@ class Failure {
 
   @override
   String toString() =>
-      'Failure(message: ' +
-      message +
-      ', exception: ' +
-      (exception?.toString() ?? 'null') +
-      ')';
+      'Failure(message: $message, exception: ${exception?.toString() ?? 'null'})';
 }

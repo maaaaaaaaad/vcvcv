@@ -136,7 +136,6 @@ class _ProfileActionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = Theme.of(context).colorScheme;
     return Column(
       children: const [
         _ProfileActionTile(

@@ -19,7 +19,9 @@ class NetworkImageThumb extends StatelessWidget {
   Widget build(BuildContext context) {
     final dpr = MediaQuery.of(context).devicePixelRatio;
     final cacheW = (size * dpr).round();
-    final ph = placeholderColor ?? Theme.of(context).colorScheme.surfaceVariant;
+    final ph =
+        placeholderColor ??
+        Theme.of(context).colorScheme.surfaceContainerHighest;
     return ClipRRect(
       borderRadius: BorderRadius.circular(radius),
       child: Image.network(

@@ -14,7 +14,7 @@ class SkeletonBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = Theme.of(context).colorScheme.surfaceVariant;
+    final c = Theme.of(context).colorScheme.surfaceContainerHighest;
     return ClipRRect(
       borderRadius: borderRadius ?? BorderRadius.circular(8),
       child: Container(

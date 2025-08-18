@@ -4,7 +4,6 @@ import 'package:jello_mark/data/datasources/auth_local_data_source.dart';
 import 'package:jello_mark/data/datasources/mock_kakao_auth_data_source.dart';
 import 'package:jello_mark/data/repositories/auth_repository_impl.dart';
 import 'package:jello_mark/domain/entities/token_pair.dart';
-import 'package:jello_mark/domain/repositories/auth_repository.dart';
 import 'package:jello_mark/domain/usecases/get_session.dart';
 import 'package:jello_mark/domain/usecases/login_with_kakao.dart';
 import 'package:jello_mark/domain/usecases/logout.dart';
