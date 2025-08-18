@@ -30,7 +30,7 @@ class HistoryDetailPage extends StatelessWidget {
             Text(_fmt(record.date)),
             const SizedBox(height: 8),
             Text(
-              record.price.toString() + '원',
+              '${record.price}원',
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -40,10 +40,6 @@ class HistoryDetailPage extends StatelessWidget {
   }
 
   String _fmt(DateTime d) {
-    return d.year.toString() +
-        '-' +
-        d.month.toString().padLeft(2, '0') +
-        '-' +
-        d.day.toString().padLeft(2, '0');
+    return '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
   }
 }
