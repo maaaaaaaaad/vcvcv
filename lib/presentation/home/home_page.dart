@@ -9,6 +9,8 @@ import '../common/widgets/shop_carousel.dart';
 import '../common/widgets/empty_view.dart';
 import '../main/paging_view_models.dart';
 
+enum HomeShopSort { distance, rating, reviews, reservations }
+
 class HomeTabScreen extends StatefulWidget {
   final HomeListViewModel vm;
 
@@ -20,6 +22,8 @@ class HomeTabScreen extends StatefulWidget {
 
 class _HomeTabScreenState extends State<HomeTabScreen> {
   final ScrollController _controller = ScrollController();
+  HomeShopSort _sort = HomeShopSort.distance;
+  bool _showFilter = false;
 
   @override
   void initState() {
@@ -63,44 +67,21 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                         SliverToBoxAdapter(
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const _HeaderGreeting(),
-                                const SizedBox(height: 12),
-                                const _GradientPromoCard(),
-                                const SizedBox(height: 12),
-                                QuickActionsRow(
-                                  onNailTap: () {},
-                                  onLashTap: () {},
-                                  onBrowTap: () {},
-                                  onEstimateTap: () {},
-                                ),
-                                if (items.isNotEmpty) const SizedBox(height: 8),
-                                if (items.isNotEmpty)
-                                  SectionHeader(
-                                    title: '이번 주 인기 샵',
-                                    actionText: '전체보기',
-                                    onAction: () {},
-                                  ),
-                                if (items.isNotEmpty) const SizedBox(height: 8),
-                                if (items.isNotEmpty)
-                                  ShopCarousel(
-                                    shops: items.take(8).toList(),
-                                    onTap: (s) {
-                                      Navigator.of(context).pushNamed(
-                                        '/shopDetail',
-                                        arguments: s.id,
-                                      );
-                                    },
-                                  ),
-                                const SizedBox(height: 12),
-                                SectionHeader(
-                                  title: '근처 샵',
-                                  actionText: '더보기',
-                                  onAction: () {},
-                                ),
-                              ],
+                            child: _TopSection(
+                              items: items,
+                              sort: _sort,
+                              showFilter: _showFilter,
+                              onToggleFilter: () =>
+                                  setState(() => _showFilter = !_showFilter),
+                              onSelectSort: (s) => setState(() {
+                                _sort = s;
+                                _showFilter = false;
+                              }),
+                              onTapShop: (s) {
+                                Navigator.of(
+                                  context,
+                                ).pushNamed('/shopDetail', arguments: s.id);
+                              },
                             ),
                           ),
                         ),
@@ -127,31 +108,7 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                               ),
                             ),
                           ),
-                        SliverList.builder(
-                          itemCount: items.length,
-                          itemBuilder: (context, index) {
-                            final s = items[index];
-                            return TweenAnimationBuilder<double>(
-                              duration: const Duration(milliseconds: 400),
-                              curve: Curves.easeOut,
-                              tween: Tween(begin: 0, end: 1),
-                              builder: (context, t, child) => Opacity(
-                                opacity: t,
-                                child: Transform.translate(
-                                  offset: Offset(0, (1 - t) * 12),
-                                  child: child,
-                                ),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 6,
-                                ),
-                                child: _ShopBannerCard(shop: s),
-                              ),
-                            );
-                          },
-                        ),
+                        _SortedShopSliver(items: items, sort: _sort),
                         SliverToBoxAdapter(
                           child: loading
                               ? const Padding(
@@ -457,6 +414,218 @@ class _ShopBannerSkeleton extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _TopSection extends StatelessWidget {
+  final List<Shop> items;
+  final HomeShopSort sort;
+  final bool showFilter;
+  final VoidCallback onToggleFilter;
+  final ValueChanged<HomeShopSort> onSelectSort;
+  final void Function(Shop) onTapShop;
+
+  const _TopSection({
+    required this.items,
+    required this.sort,
+    required this.showFilter,
+    required this.onToggleFilter,
+    required this.onSelectSort,
+    required this.onTapShop,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const _HeaderGreeting(),
+        const SizedBox(height: 12),
+        const _GradientPromoCard(),
+        const SizedBox(height: 12),
+        QuickActionsRow(
+          onNailTap: () {},
+          onLashTap: () {},
+          onBrowTap: () {},
+          onEstimateTap: () {},
+        ),
+        if (items.isNotEmpty) const SizedBox(height: 8),
+        if (items.isNotEmpty)
+          SectionHeader(
+            title: '이번 주 인기 샵',
+            actionText: '전체보기',
+            onAction: () {},
+          ),
+        if (items.isNotEmpty) const SizedBox(height: 8),
+        if (items.isNotEmpty)
+          ShopCarousel(shops: items.take(8).toList(), onTap: onTapShop),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '근처 샵',
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
+            ),
+            GestureDetector(
+              onTap: onToggleFilter,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 220),
+                curve: Curves.easeOut,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: showFilter
+                      ? Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.08)
+                      : Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.tune,
+                      size: 16,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      _labelFor(sort),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        ClipRect(
+          child: AnimatedSize(
+            duration: const Duration(milliseconds: 260),
+            curve: Curves.easeOutCubic,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 220),
+              opacity: showFilter ? 1 : 0,
+              child: showFilter
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          ChoiceChip(
+                            label: const Text('가까운 순'),
+                            selected: sort == HomeShopSort.distance,
+                            onSelected: (_) =>
+                                onSelectSort(HomeShopSort.distance),
+                          ),
+                          ChoiceChip(
+                            label: const Text('평점 순'),
+                            selected: sort == HomeShopSort.rating,
+                            onSelected: (_) =>
+                                onSelectSort(HomeShopSort.rating),
+                          ),
+                          ChoiceChip(
+                            label: const Text('리뷰 많은 순'),
+                            selected: sort == HomeShopSort.reviews,
+                            onSelected: (_) =>
+                                onSelectSort(HomeShopSort.reviews),
+                          ),
+                          ChoiceChip(
+                            label: const Text('예약 많은 순'),
+                            selected: sort == HomeShopSort.reservations,
+                            onSelected: (_) =>
+                                onSelectSort(HomeShopSort.reservations),
+                          ),
+                        ],
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _labelFor(HomeShopSort s) {
+    switch (s) {
+      case HomeShopSort.distance:
+        return '가까운 순';
+      case HomeShopSort.rating:
+        return '평점 순';
+      case HomeShopSort.reviews:
+        return '리뷰 많은 순';
+      case HomeShopSort.reservations:
+        return '예약 많은 순';
+    }
+  }
+}
+
+class _SortedShopSliver extends StatelessWidget {
+  final List<Shop> items;
+  final HomeShopSort sort;
+
+  const _SortedShopSliver({required this.items, required this.sort});
+
+  @override
+  Widget build(BuildContext context) {
+    return Builder(
+      builder: (context) {
+        final sorted = List<Shop>.from(items);
+        sorted.sort((a, b) {
+          switch (sort) {
+            case HomeShopSort.distance:
+              return a.distanceKm.compareTo(b.distanceKm);
+            case HomeShopSort.rating:
+              return b.rating.compareTo(a.rating);
+            case HomeShopSort.reviews:
+              return b.reviewCount.compareTo(a.reviewCount);
+            case HomeShopSort.reservations:
+              return b.reservationCount.compareTo(a.reservationCount);
+          }
+        });
+        return SliverList.builder(
+          itemCount: sorted.length,
+          itemBuilder: (context, index) {
+            final s = sorted[index];
+            return TweenAnimationBuilder<double>(
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeOut,
+              tween: Tween(begin: 0, end: 1),
+              builder: (context, t, child) => Opacity(
+                opacity: t,
+                child: Transform.translate(
+                  offset: Offset(0, (1 - t) * 12),
+                  child: child,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                child: _ShopBannerCard(shop: s),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

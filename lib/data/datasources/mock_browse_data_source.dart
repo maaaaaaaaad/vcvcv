@@ -33,6 +33,8 @@ class MockBrowseDataSource {
         rating: 4.0 + (idx % 10) / 10,
         distanceKm: (idx % 5) + 0.3,
         thumbnailUrl: 'https://picsum.photos/seed/$id/120/120',
+        reviewCount: (idx * 17) % 400 + 10,
+        reservationCount: (idx * 13) % 200 + 5,
       );
     });
   }
@@ -69,6 +71,8 @@ class MockBrowseDataSource {
         rating: 4.2 + (idx % 7) / 10,
         distanceKm: (idx % 7) + 0.5,
         thumbnailUrl: 'https://picsum.photos/seed/$id/120/120',
+        reviewCount: (idx * 11) % 350 + 8,
+        reservationCount: (idx * 9) % 180 + 3,
       );
     });
   }

@@ -5,6 +5,8 @@ class Shop {
   final double rating;
   final double distanceKm;
   final String thumbnailUrl;
+  final int reviewCount;
+  final int reservationCount;
 
   const Shop({
     required this.id,
@@ -13,5 +15,7 @@ class Shop {
     required this.rating,
     required this.distanceKm,
     required this.thumbnailUrl,
+    required this.reviewCount,
+    required this.reservationCount,
   });
 }
