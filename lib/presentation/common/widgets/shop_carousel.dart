@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'skeleton.dart';
 import '../../../domain/entities/shop.dart';
 
 class ShopCarousel extends StatelessWidget {
@@ -41,11 +42,38 @@ class ShopCarousel extends StatelessWidget {
                       topLeft: Radius.circular(16),
                       topRight: Radius.circular(16),
                     ),
-                    child: Image.network(
-                      s.thumbnailUrl,
-                      height: 110,
-                      width: 200,
-                      fit: BoxFit.cover,
+                    child: Builder(
+                      builder: (context) {
+                        final dpr = MediaQuery.of(context).devicePixelRatio;
+                        final cacheW = (200 * dpr).round();
+                        return Image.network(
+                          s.thumbnailUrl,
+                          height: 110,
+                          width: 200,
+                          fit: BoxFit.cover,
+                          cacheWidth: cacheW,
+                          filterQuality: FilterQuality.medium,
+                          frameBuilder:
+                              (context, child, frame, wasSynchronouslyLoaded) {
+                                if (wasSynchronouslyLoaded) return child;
+                                return AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 220),
+                                  child: frame != null
+                                      ? child
+                                      : const SkeletonBox(
+                                          width: 200,
+                                          height: 110,
+                                        ),
+                                );
+                              },
+                          loadingBuilder: (context, child, progress) {
+                            if (progress == null) return child;
+                            return const SkeletonBox(width: 200, height: 110);
+                          },
+                          errorBuilder: (context, error, stack) =>
+                              const SkeletonBox(width: 200, height: 110),
+                        );
+                      },
                     ),
                   ),
                   Padding(

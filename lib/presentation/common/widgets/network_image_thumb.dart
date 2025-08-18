@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'skeleton.dart';
 
 class NetworkImageThumb extends StatelessWidget {
   final String url;
@@ -28,18 +29,25 @@ class NetworkImageThumb extends StatelessWidget {
         fit: BoxFit.cover,
         cacheWidth: cacheW,
         filterQuality: FilterQuality.medium,
+        frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+          if (wasSynchronouslyLoaded) return child;
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 220),
+            child: frame != null
+                ? child
+                : SkeletonBox(
+                    width: size,
+                    height: size,
+                    borderRadius: BorderRadius.circular(radius),
+                  ),
+          );
+        },
         loadingBuilder: (context, child, progress) {
           if (progress == null) return child;
-          return Container(
+          return SkeletonBox(
             width: size,
             height: size,
-            color: ph.withValues(alpha: 0.5),
-            alignment: Alignment.center,
-            child: const SizedBox(
-              width: 18,
-              height: 18,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
+            borderRadius: BorderRadius.circular(radius),
           );
         },
         errorBuilder: (context, error, stack) => Container(
