@@ -14,7 +14,6 @@ prepare_project() {
     exit 1
   fi
 
-  # Prefer 'dart run', fallback to 'flutter pub run'
   if command -v dart >/dev/null 2>&1; then
     dart run flutter_native_splash:create || flutter pub run flutter_native_splash:create
   else
