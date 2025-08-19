@@ -4,6 +4,7 @@ import '../../di/service_locator.dart';
 import '../../domain/usecases/fetch_shop_reviews_page.dart';
 import '../../domain/usecases/get_shop_detail.dart';
 import '../../domain/usecases/toggle_favorite.dart';
+import '../common/widgets/shop_image.dart';
 import 'shop_detail_view_model.dart';
 
 class _ReviewThumb extends StatelessWidget {
@@ -13,44 +14,9 @@ class _ReviewThumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dpr = MediaQuery.of(context).devicePixelRatio;
-    final size = 72.0;
-    final cacheW = (size * dpr).round();
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
-      child: Image.network(
-        url,
-        width: size,
-        height: size,
-        fit: BoxFit.cover,
-        cacheWidth: cacheW,
-        filterQuality: FilterQuality.medium,
-        loadingBuilder: (context, child, progress) {
-          if (progress == null) return child;
-          return Container(
-            width: size,
-            height: size,
-            color: AppColors.lavender.withValues(alpha: 0.5),
-            alignment: Alignment.center,
-            child: const SizedBox(
-              width: 16,
-              height: 16,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
-          );
-        },
-        errorBuilder: (context, error, stack) => Container(
-          width: size,
-          height: size,
-          color: AppColors.lavender,
-          alignment: Alignment.center,
-          child: const Icon(
-            Icons.image_not_supported,
-            size: 16,
-            color: Colors.white,
-          ),
-        ),
-      ),
+      child: const ShopImage(width: 72.0, height: 72.0, fit: BoxFit.cover),
     );
   }
 }

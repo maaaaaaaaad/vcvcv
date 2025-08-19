@@ -42,19 +42,24 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: ValueListenableBuilder<SplashDestination?>(
-          valueListenable: widget.vm.destination,
-          builder: (context, value, _) {
-            if (value == null) {
-              return const CircularProgressIndicator();
-            }
+      body: ValueListenableBuilder<SplashDestination?>(
+        valueListenable: widget.vm.destination,
+        builder: (context, value, _) {
+          if (value != null) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               _navigate(value);
             });
-            return const SizedBox.shrink();
-          },
-        ),
+          }
+          return Container(
+            color: Colors.white,
+            child: Center(
+              child: Image.asset(
+                'assets/app_splash_screen/jello-mark-splash.png',
+                width: 220,
+              ),
+            ),
+          );
+        },
       ),
     );
   }

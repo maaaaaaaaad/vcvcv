@@ -24,7 +24,9 @@ flutter:
   uses-material-design: true
   assets:
     - assets/app_icon/jello-mark.png
-    - assets/app_splash_screen/jello-mark-splash-screen.png
+    - assets/app_splash_screen/jello-mark-splash.png
+    - assets/app_logo/jello-mark-logo.png
+    - assets/app_mock_images/
 
 flutter_launcher_icons:
   android: true
@@ -35,9 +37,9 @@ flutter_launcher_icons:
 
 
 flutter_native_splash:
-  color: "#6B8BFF"
-  image: assets/app_splash_screen/jello-mark-splash-screen.png
+  color: "#FFFFFF"
+  image: assets/app_splash_screen/jello-mark-splash.png
   android_12:
-    color: "#6B8BFF"
-    image: assets/app_splash_screen/jello-mark-splash-screen.png
+    color: "#FFFFFF"
+    image: assets/app_splash_screen/jello-mark-splash.png
   web: false

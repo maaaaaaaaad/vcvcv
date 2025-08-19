@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/design_system/app_colors.dart';
 import 'login_view_model.dart';
 
 class LoginPage extends StatefulWidget {
@@ -12,15 +13,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  double _logoScale = 0.9;
-
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (mounted) setState(() => _logoScale = 1);
-    });
-  }
 
   @override
   void dispose() {
@@ -46,45 +38,21 @@ class _LoginPageState extends State<LoginPage> {
     final c = Theme.of(context).colorScheme;
     final vm = widget.vm;
     return Scaffold(
-      backgroundColor: c.surface,
+      backgroundColor: AppColors.primaryBlue,
       body: Stack(
         children: [
-          Positioned.fill(
-            child: Image.asset(
-              'assets/app_splash_screen/jello-mark-splash-screen.png',
-              fit: BoxFit.cover,
-              filterQuality: FilterQuality.high,
-            ),
-          ),
+          const SizedBox.shrink(),
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 children: [
-                  const Spacer(flex: 3),
-                  AnimatedScale(
-                    scale: _logoScale,
-                    duration: const Duration(milliseconds: 500),
-                    curve: Curves.easeOutBack,
-                    child: Column(
-                      children: [
-                        Text(
-                          '젤로마크',
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w900,
-                                shadows: [
-                                  Shadow(
-                                    color: Colors.black.withValues(alpha: 0.45),
-                                    blurRadius: 8,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                        ),
-                      ],
+                  Expanded(
+                    child: Center(
+                      child: Image.asset(
+                        'assets/app_logo/jello-mark-logo.png',
+                        width: 220,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -209,7 +177,7 @@ class _KakaoButtonState extends State<_KakaoButton> {
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  widget.loading ? '로그인 중...' : '카카오로 계속하기',
+                  widget.loading ? '로그인 중...' : '카카오로 로그인',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Colors.black,

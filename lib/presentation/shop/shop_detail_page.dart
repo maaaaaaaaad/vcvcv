@@ -4,6 +4,7 @@ import '../../di/service_locator.dart';
 import '../../domain/usecases/fetch_shop_reviews_page.dart';
 import '../../domain/usecases/get_shop_detail.dart';
 import '../../domain/usecases/toggle_favorite.dart';
+import '../common/widgets/shop_image.dart';
 import 'shop_detail_view_model.dart';
 import 'shop_reviews_page.dart';
 
@@ -23,29 +24,10 @@ class _DetailImagePager extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final dpr = MediaQuery.of(context).devicePixelRatio;
-    final cacheW = (width * dpr).round();
     return PageView.builder(
       itemCount: urls.length,
       itemBuilder: (context, index) {
-        final u = urls[index];
-        return Image.network(
-          u,
-          fit: BoxFit.cover,
-          cacheWidth: cacheW,
-          filterQuality: FilterQuality.medium,
-          loadingBuilder: (context, child, progress) {
-            if (progress == null) return child;
-            return Container(
-              color: AppColors.lavender.withValues(alpha: 0.4),
-              alignment: Alignment.center,
-              child: const CircularProgressIndicator(),
-            );
-          },
-          errorBuilder: (context, error, stack) =>
-              Container(color: AppColors.lavender),
-        );
+        return const ShopImage(fit: BoxFit.cover);
       },
     );
   }

@@ -6,6 +6,7 @@ import '../common/widgets/skeleton.dart';
 import '../common/widgets/quick_actions.dart';
 import '../common/widgets/section_header.dart';
 import '../common/widgets/shop_carousel.dart';
+import '../common/widgets/shop_image.dart';
 import '../common/widgets/empty_view.dart';
 import '../main/paging_view_models.dart';
 
@@ -266,9 +267,6 @@ class _ShopBannerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width - 24;
-    final dpr = MediaQuery.of(context).devicePixelRatio;
-    final cacheW = (width * dpr).round();
     final c = Theme.of(context).colorScheme;
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -280,48 +278,10 @@ class _ShopBannerCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(
-              shop.thumbnailUrl,
-              width: width,
+            const ShopImage(
+              width: double.infinity,
               height: 160,
               fit: BoxFit.cover,
-              cacheWidth: cacheW,
-              filterQuality: FilterQuality.medium,
-              frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                if (wasSynchronouslyLoaded) return child;
-                return AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 220),
-                  child: frame != null
-                      ? child
-                      : const SkeletonBox(
-                          width: double.infinity,
-                          height: 160,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(14),
-                            topRight: Radius.circular(14),
-                          ),
-                        ),
-                );
-              },
-              loadingBuilder: (context, child, progress) {
-                if (progress == null) return child;
-                return const SkeletonBox(
-                  width: double.infinity,
-                  height: 160,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(14),
-                    topRight: Radius.circular(14),
-                  ),
-                );
-              },
-              errorBuilder: (context, error, stack) => const SkeletonBox(
-                width: double.infinity,
-                height: 160,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(14),
-                  topRight: Radius.circular(14),
-                ),
-              ),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
