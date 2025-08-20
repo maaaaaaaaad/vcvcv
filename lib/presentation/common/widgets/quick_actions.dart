@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 
 class QuickActionsRow extends StatelessWidget {
   final VoidCallback onNailTap;
-  final VoidCallback onLashTap;
-  final VoidCallback onBrowTap;
+  final VoidCallback onSemiPermanentTap;
+  final VoidCallback onWaxingTap;
+  final VoidCallback onAestheticTap;
   final VoidCallback onEstimateTap;
 
   const QuickActionsRow({
     super.key,
     required this.onNailTap,
-    required this.onLashTap,
-    required this.onBrowTap,
+    required this.onSemiPermanentTap,
+    required this.onWaxingTap,
+    required this.onAestheticTap,
     required this.onEstimateTap,
   });
 
@@ -21,14 +23,19 @@ class QuickActionsRow extends StatelessWidget {
       children: [
         QuickActionButton(icon: Icons.brush, label: '네일', onTap: onNailTap),
         QuickActionButton(
-          icon: Icons.visibility,
-          label: '속눈썹',
-          onTap: onLashTap,
+          icon: Icons.auto_awesome,
+          label: '반영구',
+          onTap: onSemiPermanentTap,
         ),
         QuickActionButton(
-          icon: Icons.face_retouching_natural,
-          label: '눈썹',
-          onTap: onBrowTap,
+          icon: Icons.content_cut,
+          label: '왁싱/제모',
+          onTap: onWaxingTap,
+        ),
+        QuickActionButton(
+          icon: Icons.spa,
+          label: '에스테틱',
+          onTap: onAestheticTap,
         ),
         QuickActionButton(
           icon: Icons.calculate,
