@@ -137,8 +137,9 @@ class _QuickActionsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return QuickActionsRow(
       onNailTap: _noop,
-      onLashTap: _noop,
-      onBrowTap: _noop,
+      onSemiPermanentTap: _noop,
+      onWaxingTap: _noop,
+      onAestheticTap: _noop,
       onEstimateTap: _noop,
     );
   }
