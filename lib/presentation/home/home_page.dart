@@ -406,8 +406,9 @@ class _TopSection extends StatelessWidget {
         const SizedBox(height: 12),
         QuickActionsRow(
           onNailTap: () {},
-          onLashTap: () {},
-          onBrowTap: () {},
+          onSemiPermanentTap: () {},
+          onWaxingTap: () {},
+          onAestheticTap: () {},
           onEstimateTap: () {},
         ),
         if (items.isNotEmpty) const SizedBox(height: 8),
