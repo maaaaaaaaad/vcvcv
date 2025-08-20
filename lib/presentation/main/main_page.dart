@@ -153,8 +153,9 @@ class _HomeTabPageState extends State<HomeTabPage> {
                           const SizedBox(height: 12),
                           _QuickActionsRow(
                             onNailTap: () {},
-                            onLashTap: () {},
-                            onBrowTap: () {},
+                            onSemiPermanentTap: () {},
+                            onWaxingTap: () {},
+                            onAestheticTap: () {},
                             onEstimateTap: () {},
                           ),
                           if (items.isNotEmpty) const SizedBox(height: 8),
@@ -454,8 +455,9 @@ class BookingTabPage extends StatelessWidget {
             const SizedBox(height: 12),
             _QuickActionsRow(
               onNailTap: () {},
-              onLashTap: () {},
-              onBrowTap: () {},
+              onSemiPermanentTap: () {},
+              onWaxingTap: () {},
+              onAestheticTap: () {},
               onEstimateTap: () {},
             ),
             const SizedBox(height: 12),
@@ -762,14 +764,16 @@ class _GradientPromoCardState extends State<_GradientPromoCard>
 
 class _QuickActionsRow extends StatelessWidget {
   final VoidCallback onNailTap;
-  final VoidCallback onLashTap;
-  final VoidCallback onBrowTap;
+  final VoidCallback onSemiPermanentTap;
+  final VoidCallback onWaxingTap;
+  final VoidCallback onAestheticTap;
   final VoidCallback onEstimateTap;
 
   const _QuickActionsRow({
     required this.onNailTap,
-    required this.onLashTap,
-    required this.onBrowTap,
+    required this.onSemiPermanentTap,
+    required this.onWaxingTap,
+    required this.onAestheticTap,
     required this.onEstimateTap,
   });
 
@@ -777,8 +781,9 @@ class _QuickActionsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return QuickActionsRow(
       onNailTap: onNailTap,
-      onLashTap: onLashTap,
-      onBrowTap: onBrowTap,
+      onSemiPermanentTap: onSemiPermanentTap,
+      onWaxingTap: onWaxingTap,
+      onAestheticTap: onAestheticTap,
       onEstimateTap: onEstimateTap,
     );
   }
