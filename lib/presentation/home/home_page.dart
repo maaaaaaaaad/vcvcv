@@ -8,6 +8,7 @@ import '../common/widgets/section_header.dart';
 import '../common/widgets/shop_carousel.dart';
 import '../common/widgets/shop_image.dart';
 import '../common/widgets/empty_view.dart';
+import '../common/widgets/infographic_loop.dart';
 import '../main/paging_view_models.dart';
 
 enum HomeShopSort { distance, rating, reviews, reservations }
@@ -250,7 +251,13 @@ class _GradientPromoCardState extends State<_GradientPromoCard>
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Icon(Icons.brush, color: Colors.white, size: 32),
+                alignment: Alignment.center,
+                child: const InfographicLoop(
+                  size: 40,
+                  color: Colors.white,
+                  bars: 5,
+                  duration: Duration(milliseconds: 1200),
+                ),
               ),
             ],
           ),
