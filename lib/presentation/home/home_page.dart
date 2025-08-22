@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/rendering.dart';
 import '../../core/design_system/app_colors.dart';
 import '../../domain/entities/shop.dart';
 import '../common/widgets/skeleton.dart';
@@ -10,6 +11,7 @@ import '../common/widgets/shop_image.dart';
 import '../common/widgets/empty_view.dart';
 import '../common/widgets/infographic_loop.dart';
 import '../main/paging_view_models.dart';
+import '../search/search_page.dart';
 
 enum HomeShopSort { distance, rating, reviews, reservations }
 
@@ -26,12 +28,17 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
   final ScrollController _controller = ScrollController();
   HomeShopSort _sort = HomeShopSort.distance;
   bool _showFilter = false;
+  bool _searchHidden = false;
+  final GlobalKey _searchKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
     widget.vm.initIfNeeded();
     _controller.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => _updateSearchVisibility(),
+    );
   }
 
   @override
@@ -45,6 +52,33 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
     if (_controller.position.pixels >=
         _controller.position.maxScrollExtent - 200) {
       widget.vm.loadMore();
+    }
+    _updateSearchVisibility();
+  }
+
+  void _updateSearchVisibility() {
+    final ctx = _searchKey.currentContext;
+    if (ctx == null) return;
+    final box = ctx.findRenderObject();
+    if (box is! RenderBox) return;
+    final pos = box.localToGlobal(Offset.zero);
+    final height = box.size.height;
+    final topInset = MediaQuery.of(context).padding.top;
+    final visible = pos.dy + height > topInset + 8;
+    if (_searchHidden == visible) {
+      setState(() => _searchHidden = !visible);
+    }
+  }
+
+  Future<void> _openSearch() async {
+    final result = await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const SearchPage()));
+    if (!mounted) return;
+    if (result is String && result.isNotEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('검색: $result')));
     }
   }
 
@@ -63,65 +97,118 @@ class _HomeTabScreenState extends State<HomeTabScreen> {
                 ValueListenableBuilder<List<Shop>>(
                   valueListenable: widget.vm.items,
                   builder: (context, items, __) {
-                    return CustomScrollView(
-                      controller: _controller,
-                      slivers: [
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                            child: _TopSection(
-                              items: items,
-                              sort: _sort,
-                              showFilter: _showFilter,
-                              onToggleFilter: () =>
-                                  setState(() => _showFilter = !_showFilter),
-                              onSelectSort: (s) => setState(() {
-                                _sort = s;
-                                _showFilter = false;
-                              }),
-                              onTapShop: (s) {
-                                Navigator.of(
-                                  context,
-                                ).pushNamed('/shopDetail', arguments: s.id);
-                              },
-                            ),
-                          ),
-                        ),
-                        if (items.isEmpty && loading)
-                          SliverList.builder(
-                            itemCount: 4,
-                            itemBuilder: (context, index) => const Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              child: _ShopBannerSkeleton(),
-                            ),
-                          ),
-                        if (items.isEmpty && !loading)
-                          SliverToBoxAdapter(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                              ),
-                              child: EmptyView(
-                                title: '매장을 불러오지 않았어요',
-                                description: '새로고침하거나 잠시 후 다시 시도해주세요',
-                              ),
-                            ),
-                          ),
-                        _SortedShopSliver(items: items, sort: _sort),
-                        SliverToBoxAdapter(
-                          child: loading
-                              ? const Padding(
-                                  padding: EdgeInsets.all(16),
-                                  child: Center(
-                                    child: CircularProgressIndicator(),
+                    return Stack(
+                      children: [
+                        CustomScrollView(
+                          controller: _controller,
+                          slivers: [
+                            SliverToBoxAdapter(
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  16,
+                                  16,
+                                  16,
+                                  8,
+                                ),
+                                child: _TopSection(
+                                  items: items,
+                                  sort: _sort,
+                                  showFilter: _showFilter,
+                                  onToggleFilter: () => setState(
+                                    () => _showFilter = !_showFilter,
                                   ),
-                                )
-                              : const SizedBox.shrink(),
+                                  onSelectSort: (s) => setState(() {
+                                    _sort = s;
+                                    _showFilter = false;
+                                  }),
+                                  onTapShop: (s) {
+                                    Navigator.of(
+                                      context,
+                                    ).pushNamed('/shopDetail', arguments: s.id);
+                                  },
+                                  searchKey: _searchKey,
+                                  onTapSearch: _openSearch,
+                                ),
+                              ),
+                            ),
+                            if (items.isEmpty && loading)
+                              SliverList.builder(
+                                itemCount: 4,
+                                itemBuilder: (context, index) => const Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  child: _ShopBannerSkeleton(),
+                                ),
+                              ),
+                            if (items.isEmpty && !loading)
+                              SliverToBoxAdapter(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                  ),
+                                  child: EmptyView(
+                                    title: '매장을 불러오지 않았어요',
+                                    description: '새로고침하거나 잠시 후 다시 시도해주세요',
+                                  ),
+                                ),
+                              ),
+                            _SortedShopSliver(items: items, sort: _sort),
+                            SliverToBoxAdapter(
+                              child: loading
+                                  ? const Padding(
+                                      padding: EdgeInsets.all(16),
+                                      child: Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                            ),
+                            const SliverToBoxAdapter(
+                              child: SizedBox(height: 24),
+                            ),
+                          ],
                         ),
-                        const SliverToBoxAdapter(child: SizedBox(height: 24)),
+                        Positioned(
+                          top: 8,
+                          right: 12,
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 200),
+                            child: _searchHidden
+                                ? Row(
+                                    key: const ValueKey('overlay-icons'),
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundColor: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                        child: IconButton(
+                                          icon: const Icon(Icons.search),
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onPrimary,
+                                          onPressed: _openSearch,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      CircleAvatar(
+                                        backgroundColor: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                        child: IconButton(
+                                          icon: const Icon(Icons.notifications),
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onPrimary,
+                                          onPressed: () {},
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                : const SizedBox.shrink(),
+                          ),
+                        ),
                       ],
                     );
                   },
@@ -392,6 +479,8 @@ class _TopSection extends StatelessWidget {
   final VoidCallback onToggleFilter;
   final ValueChanged<HomeShopSort> onSelectSort;
   final void Function(Shop) onTapShop;
+  final GlobalKey searchKey;
+  final VoidCallback onTapSearch;
 
   const _TopSection({
     required this.items,
@@ -400,6 +489,8 @@ class _TopSection extends StatelessWidget {
     required this.onToggleFilter,
     required this.onSelectSort,
     required this.onTapShop,
+    required this.searchKey,
+    required this.onTapSearch,
   });
 
   @override
@@ -408,6 +499,47 @@ class _TopSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const _HeaderGreeting(),
+        const SizedBox(height: 12),
+        GestureDetector(
+          key: searchKey,
+          onTap: onTapSearch,
+          child: Container(
+            height: 44,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.06),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.search,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    '샵 검색',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                Icon(
+                  Icons.tune,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ],
+            ),
+          ),
+        ),
         const SizedBox(height: 12),
         const _GradientPromoCard(),
         const SizedBox(height: 12),
