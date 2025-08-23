@@ -7,6 +7,7 @@ import '../../domain/usecases/toggle_favorite.dart';
 import '../common/widgets/shop_image.dart';
 import 'shop_detail_view_model.dart';
 import 'shop_reviews_page.dart';
+import '../booking/booking_detail_page.dart';
 
 class ShopDetailPage extends StatefulWidget {
   final String shopId;
@@ -171,22 +172,41 @@ class _ShopDetailPageState extends State<ShopDetailPage> {
           );
         },
       ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: SizedBox(
-            width: double.infinity,
-            height: 48,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryBlue,
-                foregroundColor: Colors.white,
+      bottomNavigationBar: ValueListenableBuilder(
+        valueListenable: vm.detail,
+        builder: (context, detail, _) {
+          final enabled = detail != null;
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryBlue,
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: enabled
+                      ? () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => BookingDetailPage(
+                                shopId: detail.id,
+                                shopName: detail.name,
+                                services: detail.services,
+                                imageUrls: detail.imageUrls,
+                              ),
+                            ),
+                          );
+                        }
+                      : null,
+                  child: const Text('예약하기'),
+                ),
               ),
-              onPressed: () {},
-              child: const Text('예약하기'),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
