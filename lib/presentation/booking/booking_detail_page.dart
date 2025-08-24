@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../core/design_system/app_colors.dart';
 import '../../domain/entities/service_item.dart';
 import '../common/widgets/shop_image.dart';
+import '../common/widgets/image_viewer.dart';
 
 class BookingDetailPage extends StatefulWidget {
   final String shopId;
@@ -97,7 +98,17 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
             if (headerImg != null)
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: headerImg,
+                child: GestureDetector(
+                  onTap: () {
+                    final urls = widget.imageUrls!;
+                    showDialog(
+                      context: context,
+                      barrierColor: Colors.black87,
+                      builder: (_) => ImageViewer(urls: urls, initialIndex: 0),
+                    );
+                  },
+                  child: headerImg,
+                ),
               ),
             if (headerImg != null) const SizedBox(height: 12),
             Row(
