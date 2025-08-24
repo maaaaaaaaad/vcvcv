@@ -19,7 +19,7 @@ class NetworkImageThumb extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(radius),
-      child: ShopImage(width: size, height: size, fit: BoxFit.cover),
+      child: ShopImage(src: url, width: size, height: size, fit: BoxFit.cover),
     );
   }
 }

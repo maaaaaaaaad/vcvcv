@@ -5,6 +5,7 @@ import '../../domain/usecases/fetch_shop_reviews_page.dart';
 import '../../domain/usecases/get_shop_detail.dart';
 import '../../domain/usecases/toggle_favorite.dart';
 import '../common/widgets/shop_image.dart';
+import '../common/widgets/image_viewer.dart';
 import 'shop_detail_view_model.dart';
 import 'shop_reviews_page.dart';
 import '../booking/booking_detail_page.dart';
@@ -28,7 +29,17 @@ class _DetailImagePager extends StatelessWidget {
     return PageView.builder(
       itemCount: urls.length,
       itemBuilder: (context, index) {
-        return const ShopImage(fit: BoxFit.cover);
+        final u = urls[index];
+        return GestureDetector(
+          onTap: () {
+            showDialog(
+              context: context,
+              barrierColor: Colors.black87,
+              builder: (_) => ImageViewer(urls: urls, initialIndex: index),
+            );
+          },
+          child: ShopImage(src: u, fit: BoxFit.cover),
+        );
       },
     );
   }
