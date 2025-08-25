@@ -4,22 +4,9 @@ import '../../di/service_locator.dart';
 import '../../domain/usecases/fetch_shop_reviews_page.dart';
 import '../../domain/usecases/get_shop_detail.dart';
 import '../../domain/usecases/toggle_favorite.dart';
-import '../common/widgets/shop_image.dart';
+import '../common/widgets/network_image_thumb.dart';
+import '../common/widgets/image_viewer.dart';
 import 'shop_detail_view_model.dart';
-
-class _ReviewThumb extends StatelessWidget {
-  final String url;
-
-  const _ReviewThumb({required this.url});
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
-      child: const ShopImage(width: 72.0, height: 72.0, fit: BoxFit.cover),
-    );
-  }
-}
 
 class ShopReviewsPage extends StatefulWidget {
   final String shopId;
@@ -60,6 +47,14 @@ class _ShopReviewsPageState extends State<ShopReviewsPage> {
         _controller.position.maxScrollExtent - 200) {
       vm.loadMoreReviews();
     }
+  }
+
+  void _openImageViewer(List<String> urls, int initialIndex) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black87,
+      builder: (_) => ImageViewer(urls: urls, initialIndex: initialIndex),
+    );
   }
 
   @override
@@ -115,9 +110,18 @@ class _ShopReviewsPageState extends State<ShopReviewsPage> {
                         child: Wrap(
                           spacing: 6,
                           runSpacing: 6,
-                          children: r.imageUrls
-                              .map((u) => _ReviewThumb(url: u))
-                              .toList(),
+                          children: r.imageUrls.asMap().entries.map((e) {
+                            final i = e.key;
+                            final u = e.value;
+                            return GestureDetector(
+                              onTap: () => _openImageViewer(r.imageUrls, i),
+                              child: NetworkImageThumb(
+                                url: u,
+                                size: 72,
+                                radius: 8,
+                              ),
+                            );
+                          }).toList(),
                         ),
                       ),
                   ],
