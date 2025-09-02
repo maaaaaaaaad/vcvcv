@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import '../../core/design_system/app_colors.dart';
 import '../../domain/entities/service_item.dart';
 import '../common/widgets/shop_image.dart';
@@ -130,14 +131,8 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
   Widget build(BuildContext context) {
     final c = Theme.of(context).colorScheme;
     final t = Theme.of(context).textTheme;
-    final headerImg = (widget.imageUrls != null && widget.imageUrls!.isNotEmpty)
-        ? ShopImage(
-            src: widget.imageUrls!.first,
-            width: double.infinity,
-            height: 160,
-            fit: BoxFit.cover,
-          )
-        : null;
+    final hasImages = widget.imageUrls != null && widget.imageUrls!.isNotEmpty;
+    final urls = widget.imageUrls ?? const <String>[];
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.primaryBlue,
@@ -149,22 +144,16 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (headerImg != null)
+            if (hasImages)
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: GestureDetector(
-                  onTap: () {
-                    final urls = widget.imageUrls!;
-                    showDialog(
-                      context: context,
-                      barrierColor: Colors.black87,
-                      builder: (_) => ImageViewer(urls: urls, initialIndex: 0),
-                    );
-                  },
-                  child: headerImg,
+                child: SizedBox(
+                  height: 160,
+                  width: double.infinity,
+                  child: _AutoCarousel(urls: urls),
                 ),
               ),
-            if (headerImg != null) const SizedBox(height: 12),
+            if (hasImages) const SizedBox(height: 12),
             Row(
               children: [
                 Expanded(
@@ -383,5 +372,68 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
 
   String _fmtDate(DateTime d) {
     return '${d.year}.${d.month.toString().padLeft(2, '0')}.${d.day.toString().padLeft(2, '0')}';
+  }
+}
+
+class _AutoCarousel extends StatefulWidget {
+  final List<String> urls;
+
+  const _AutoCarousel({required this.urls});
+
+  @override
+  State<_AutoCarousel> createState() => _AutoCarouselState();
+}
+
+class _AutoCarouselState extends State<_AutoCarousel> {
+  late final PageController _controller;
+  int _index = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = PageController();
+    if (widget.urls.length > 1) {
+      _timer = Timer.periodic(const Duration(seconds: 3), (_) {
+        if (!mounted) return;
+        final next = (_index + 1) % widget.urls.length;
+        _controller.animateToPage(
+          next,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeOut,
+        );
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _openViewer() {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black87,
+      builder: (_) => ImageViewer(urls: widget.urls, initialIndex: _index),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: _openViewer,
+      child: PageView.builder(
+        controller: _controller,
+        onPageChanged: (i) => setState(() => _index = i),
+        itemCount: widget.urls.length,
+        itemBuilder: (context, i) {
+          final u = widget.urls[i];
+          return ShopImage(src: u, fit: BoxFit.cover);
+        },
+      ),
+    );
   }
 }
