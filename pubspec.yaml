@@ -27,6 +27,7 @@ flutter:
     - assets/app_splash_screen/jello-mark-splash.png
     - assets/app_logo/jello-mark-logo.png
     - assets/app_mock_images/
+    - assets/app_event_banner/
 
 flutter_launcher_icons:
   android: true
