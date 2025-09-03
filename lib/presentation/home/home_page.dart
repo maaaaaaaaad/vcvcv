@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:flutter/rendering.dart';
 import '../../core/design_system/app_colors.dart';
 import '../../domain/entities/shop.dart';
 import '../common/widgets/skeleton.dart';
@@ -561,6 +561,8 @@ class _TopSection extends StatelessWidget {
         if (items.isNotEmpty)
           ShopCarousel(shops: items.take(8).toList(), onTap: onTapShop),
         const SizedBox(height: 12),
+        const _EventBannerSection(),
+        const SizedBox(height: 12),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -725,6 +727,86 @@ class _SortedShopSliver extends StatelessWidget {
             );
           },
         );
+      },
+    );
+  }
+}
+
+class _EventBannerSection extends StatelessWidget {
+  const _EventBannerSection();
+
+  @override
+  Widget build(BuildContext context) {
+    const assets = [
+      'assets/app_event_banner/Gemini_Generated_Image_j2463gj2463gj246.png',
+      'assets/app_event_banner/Gemini_Generated_Image_j2463gj2463gj246 (1).png',
+      'assets/app_event_banner/Gemini_Generated_Image_j2463gj2463gj246 (2).png',
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionHeader(title: '이번 주 이벤트 샵', actionText: '전체보기', onAction: () {}),
+        const SizedBox(height: 8),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: SizedBox(
+            height: 140,
+            width: double.infinity,
+            child: _EventBannerCarousel(assets: assets),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _EventBannerCarousel extends StatefulWidget {
+  final List<String> assets;
+
+  const _EventBannerCarousel({required this.assets});
+
+  @override
+  State<_EventBannerCarousel> createState() => _EventBannerCarouselState();
+}
+
+class _EventBannerCarouselState extends State<_EventBannerCarousel> {
+  late final PageController _controller;
+  int _index = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = PageController();
+    if (widget.assets.length > 1) {
+      _timer = Timer.periodic(const Duration(seconds: 3), (_) {
+        if (!mounted) return;
+        final next = (_index + 1) % widget.assets.length;
+        _controller.animateToPage(
+          next,
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeOut,
+        );
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PageView.builder(
+      controller: _controller,
+      onPageChanged: (i) => setState(() => _index = i),
+      itemCount: widget.assets.length,
+      itemBuilder: (context, i) {
+        final a = widget.assets[i];
+        return Image.asset(a, fit: BoxFit.cover, width: double.infinity);
       },
     );
   }
