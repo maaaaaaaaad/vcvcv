@@ -24,7 +24,7 @@ class QuickActionsRow extends StatelessWidget {
         QuickActionButton(icon: Icons.brush, label: '네일', onTap: onNailTap),
         QuickActionButton(
           icon: Icons.auto_awesome,
-          label: '반영구',
+          label: '속눈썹',
           onTap: onSemiPermanentTap,
         ),
         QuickActionButton(
