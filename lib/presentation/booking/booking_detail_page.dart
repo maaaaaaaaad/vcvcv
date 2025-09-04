@@ -392,13 +392,14 @@ class _AutoCarouselState extends State<_AutoCarousel> {
   @override
   void initState() {
     super.initState();
-    _controller = PageController();
-    if (widget.urls.length > 1) {
+    final n = widget.urls.length;
+    _controller = PageController(initialPage: n > 1 ? 1 : 0);
+    if (n > 1) {
       _timer = Timer.periodic(const Duration(seconds: 3), (_) {
         if (!mounted) return;
-        final next = (_index + 1) % widget.urls.length;
+        final current = _controller.page?.round() ?? 1;
         _controller.animateToPage(
-          next,
+          current + 1,
           duration: const Duration(milliseconds: 350),
           curve: Curves.easeOut,
         );
@@ -423,14 +424,35 @@ class _AutoCarouselState extends State<_AutoCarousel> {
 
   @override
   Widget build(BuildContext context) {
+    final n = widget.urls.length;
+    if (n <= 1) {
+      final u = widget.urls.isNotEmpty ? widget.urls.first : '';
+      return GestureDetector(
+        onTap: _openViewer,
+        child: ShopImage(src: u, fit: BoxFit.cover),
+      );
+    }
     return GestureDetector(
       onTap: _openViewer,
       child: PageView.builder(
         controller: _controller,
-        onPageChanged: (i) => setState(() => _index = i),
-        itemCount: widget.urls.length,
+        itemCount: n + 2,
+        onPageChanged: (i) {
+          final logical = (i - 1 + n) % n;
+          setState(() => _index = logical);
+          if (i == 0) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _controller.jumpToPage(n);
+            });
+          } else if (i == n + 1) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _controller.jumpToPage(1);
+            });
+          }
+        },
         itemBuilder: (context, i) {
-          final u = widget.urls[i];
+          final logical = (i - 1 + n) % n;
+          final u = widget.urls[logical];
           return ShopImage(src: u, fit: BoxFit.cover);
         },
       ),
