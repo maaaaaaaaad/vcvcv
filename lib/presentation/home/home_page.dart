@@ -777,13 +777,14 @@ class _EventBannerCarouselState extends State<_EventBannerCarousel> {
   @override
   void initState() {
     super.initState();
-    _controller = PageController();
-    if (widget.assets.length > 1) {
+    final n = widget.assets.length;
+    _controller = PageController(initialPage: n > 1 ? 1 : 0);
+    if (n > 1) {
       _timer = Timer.periodic(const Duration(seconds: 3), (_) {
         if (!mounted) return;
-        final next = (_index + 1) % widget.assets.length;
+        final current = _controller.page?.round() ?? 1;
         _controller.animateToPage(
-          next,
+          current + 1,
           duration: const Duration(milliseconds: 350),
           curve: Curves.easeOut,
         );
@@ -800,12 +801,30 @@ class _EventBannerCarouselState extends State<_EventBannerCarousel> {
 
   @override
   Widget build(BuildContext context) {
+    final n = widget.assets.length;
+    if (n <= 1) {
+      final a = widget.assets.isNotEmpty ? widget.assets.first : '';
+      return Image.asset(a, fit: BoxFit.cover, width: double.infinity);
+    }
     return PageView.builder(
       controller: _controller,
-      onPageChanged: (i) => setState(() => _index = i),
-      itemCount: widget.assets.length,
+      onPageChanged: (i) {
+        final logical = (i - 1 + n) % n;
+        setState(() => _index = logical);
+        if (i == 0) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _controller.jumpToPage(n);
+          });
+        } else if (i == n + 1) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _controller.jumpToPage(1);
+          });
+        }
+      },
+      itemCount: n + 2,
       itemBuilder: (context, i) {
-        final a = widget.assets[i];
+        final logical = (i - 1 + n) % n;
+        final a = widget.assets[logical];
         return Image.asset(a, fit: BoxFit.cover, width: double.infinity);
       },
     );
