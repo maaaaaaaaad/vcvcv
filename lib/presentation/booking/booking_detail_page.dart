@@ -4,6 +4,8 @@ import '../../core/design_system/app_colors.dart';
 import '../../domain/entities/service_item.dart';
 import '../common/widgets/shop_image.dart';
 import '../common/widgets/image_viewer.dart';
+import '../../core/notifications/notification_service.dart';
+import '../../di/service_locator.dart';
 
 class BookingDetailPage extends StatefulWidget {
   final String shopId;
@@ -64,13 +66,16 @@ class _BookingDetailPageState extends State<BookingDetailPage> {
     }
   }
 
-  void _confirm() {
+  void _confirm() async {
     if (_selectedServiceIndex == null || _selectedTime == null) return;
     final svc = widget.services[_selectedServiceIndex!];
-    final msg =
-        '${widget.shopName} ${_fmtDate(_selectedDate)} $_selectedTime\n${svc.name} 예약이 준비되었어요';
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
-    Navigator.of(context).maybePop();
+    final ns = sl.get<NotificationService>();
+    await ns.showBasic(
+      title: '예약 확정',
+      body:
+          '${widget.shopName} ${_fmtDate(_selectedDate)} $_selectedTime · ${svc.name}',
+    );
+    if (mounted) Navigator.of(context).maybePop();
   }
 
   void _openMap() {
