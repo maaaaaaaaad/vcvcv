@@ -9,10 +9,14 @@ import 'presentation/auth/login_view_model.dart';
 import 'presentation/main/main_page.dart';
 import 'presentation/main/paging_view_models.dart';
 import 'presentation/routes.dart';
+import 'core/notifications/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureDependencies();
+  final ns = sl.get<NotificationService>();
+  await ns.init();
+  await ns.requestPermission();
   runApp(const MyApp());
 }
 
