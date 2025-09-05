@@ -18,6 +18,7 @@ import '../domain/usecases/get_shop_detail.dart';
 import '../domain/usecases/fetch_shop_reviews_page.dart';
 import '../domain/usecases/toggle_favorite.dart';
 import 'service_locator.dart';
+import '../core/notifications/notification_service.dart';
 
 Future<void> configureDependencies() async {
   sl.registerSingleton<AuthLocalDataSource>(AuthLocalDataSource());
@@ -72,4 +73,6 @@ Future<void> configureDependencies() async {
   sl.registerSingleton<ToggleFavorite>(
     ToggleFavorite(sl.get<BrowseRepository>()),
   );
+
+  sl.registerSingleton<NotificationService>(NotificationService());
 }
